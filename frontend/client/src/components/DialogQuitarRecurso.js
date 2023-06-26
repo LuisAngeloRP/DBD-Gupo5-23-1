@@ -1,0 +1,69 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  Typography,
+  TextField
+} from '@mui/material';
+
+const DialogQuitarRecurso = ({ open, handleClose, proyecto, recurso }) => {
+    const navigate = useNavigate();
+    const handleConfirm = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/quitar-recurso-asignado/${proyecto.proyecto_id}/${recurso.recurso_id}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) throw new Error('Error al quitar el recurso asignado')
+            else window.location.reload()
+        } catch (error) {
+            console.error(error)
+        }
+        handleClose();
+    };
+    return (
+        <Dialog open={ open } onClose={ handleClose }>
+            <DialogContent>
+                <Typography
+                    variant='body1'
+                    style={{ fontSize: '20px',color: 'red', fontWeight: 'bold' }}
+                >
+                    ¿Estás seguro de que deseas quitar al recurso
+                </Typography>
+                <Typography fontWeight = "bold">{recurso.nombre}</Typography>
+                <Typography>asignado al proyecto:</Typography>
+                <Typography fontWeight = "bold">{proyecto.nombre_proyecto}</Typography>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    variant = 'contained'
+                    color = 'primary'
+                    onClick={ handleConfirm }
+                >
+                    Confirmar
+                </Button>
+                <Button
+                    variant = 'contained'
+                    sx = {
+                        {
+                            backgroundColor: 'red',
+                            color: 'white',
+                            '&:hover': {
+                                backgroundColor: 'darkred',
+                            }
+                        }
+                    }
+                    onClick={handleClose}
+                >
+                    Cancelar
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
+  
+export default DialogQuitarRecurso;
