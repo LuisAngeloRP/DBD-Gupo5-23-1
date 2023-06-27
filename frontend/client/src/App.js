@@ -19,6 +19,7 @@ import NavBarra from "./components/navBarra";
 import VistaGasto from "./components/vistaGasto";
 import VistaPresupuesto from "./components/vistaPresupuesto";
 import VistaPartida from "./components/vistaPartida";
+import ListaReuion from "./components/ListaReunion";
 
 export default function App() {
   return (
@@ -27,16 +28,12 @@ export default function App() {
         <NavBarra />
         <Container maxWidth="lg">
           <Routes>
-
-            // Proyecto: 
+            // Proyecto:
             <Route path="proyecto/:id" element={<Proyecto />} />
             <Route path="/proyecto/:id/objetivos" element={<Objetivos />} />
             <Route path="proyecto/:id/tareas" element={<TareasDe />} />
-            
-
-
+            <Route path="proyecto/:id/reuniones" element={<ListaReuion />} />
             // Presupuesto, partida y gastos
-            
             <Route path="lista-proyectos" element={<ListaProyectos />} />
             <Route
               path="/lista-proyectos/:id/asignaciones-recursos"
@@ -50,15 +47,19 @@ export default function App() {
             <Route path="/proyecto/:id/objetivos" element={<Objetivos />} />
             <Route path="/proyecto/:id/tareas" element={<TareasDe />} />
             // Presupuesto, partida y gastos
-            <Route path="/proyecto/:id/presupuestos" element={<VistaPresupuesto />} />
-            <Route path="/proyecto/:id/presupuestos/:id_pre/partidas" element={<VistaPartida />} />
+            <Route
+              path="/proyecto/:id/presupuestos"
+              element={<VistaPresupuesto />}
+            />
+            <Route
+              path="/proyecto/:id/presupuestos/:id_pre/partidas"
+              element={<VistaPartida />}
+            />
             <Route
               path="/proyecto/:id/presupuestos/:id_pre/partidas/:id_par/gastos"
               element={<VistaGasto />}
             />
-
-            // Reportes  
-            
+            // Reportes
             <Route path="/reportes" element={<Ventana1 />} />
             <Route path="/tareas/:id" element={<Tareas />} />
             <Route path="/objetivos/:id" element={<Objetivos />} />
@@ -74,7 +75,6 @@ export default function App() {
             <Route path="/cuadro4/:id" element={<PresupuestoxProy />} />
             <Route path="/repRecurso/:id" element={<ReporteRecursos />} />
             <Route path="/sobrantes/:id" element={<ReporteRecursos />} />
-            
           </Routes>
         </Container>
       </Box>

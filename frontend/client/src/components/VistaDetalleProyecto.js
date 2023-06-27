@@ -78,9 +78,12 @@ const Proyecto = () => {
               alignItems: "center",
             }}
           >
-            <Link to="/detalles-proyecto" style={{ textDecoration: "none", color: "inherit" }}>
+            <Button
+              to="/detalles-proyecto"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
               Detalles
-            </Link>
+            </Button>
           </TableCell>
           <TableCell
             component={Button}
@@ -94,9 +97,12 @@ const Proyecto = () => {
               alignItems: "center",
             }}
           >
-            <Link to="/hitos" style={{ textDecoration: "none", color: "inherit" }}>
+            <Button
+              to="/hitos"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
               Hitos
-            </Link>
+            </Button>
           </TableCell>
           <TableCell
             component={Button}
@@ -110,7 +116,12 @@ const Proyecto = () => {
               alignItems: "center",
             }}
           >
-            <Button onClick={() => navigate(`/lista-proyecto/${id}/asignaciones-recursos`)} style={{ textDecoration: "none", color: "inherit" }}>
+            <Button
+              onClick={() =>
+                navigate(`/lista-proyectos/${id}/asignaciones-recursos`)
+              }
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
               Asignaciones
             </Button>
           </TableCell>
@@ -126,8 +137,31 @@ const Proyecto = () => {
               alignItems: "center",
             }}
           >
-            <Button onClick={() => navigate(`/proyecto/${id}/presupuestos`)} style={{ textDecoration: "none", color: "inherit" }}>
+            <Button
+              onClick={() => navigate(`/proyecto/${id}/presupuestos`)}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
               Presupuesto
+            </Button>
+          </TableCell>
+
+          <TableCell
+            component={Button}
+            variant="contained"
+            color="primary"
+            style={{
+              fontSize: "20px",
+              marginTop: "8px",
+              padding: "8px 24px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              onClick={() => navigate(`/proyecto/${id}/tareas`)}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              Tareas
             </Button>
           </TableCell>
           <TableCell
@@ -142,9 +176,12 @@ const Proyecto = () => {
               alignItems: "center",
             }}
           >
-            <Link to="/gastos" style={{ textDecoration: "none", color: "inherit" }}>
-              Gastos
-            </Link>
+            <Button
+              onClick={() => navigate(`/proyecto/${id}/reuniones`)}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              Reuniones
+            </Button>
           </TableCell>
           <TableCell
             component={Button}
@@ -157,38 +194,7 @@ const Proyecto = () => {
               display: "flex",
               alignItems: "center",
             }}
-          >
-          </TableCell>
-          <TableCell
-            component={Button}
-            variant="contained"
-            color="primary"
-            style={{
-              fontSize: "20px",
-              marginTop: "8px",
-              padding: "8px 24px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Link to="/tareas" style={{ textDecoration: "none", color: "inherit" }}>
-              Tareas
-            </Link>
-          </TableCell>
-          <TableCell
-            component={Button}
-            variant="contained"
-            color="primary"
-            style={{
-              fontSize: "20px",
-              marginTop: "8px",
-              padding: "8px 24px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-           
-          </TableCell>
+          ></TableCell>
         </TableRow>
       </Table>
       <Paper

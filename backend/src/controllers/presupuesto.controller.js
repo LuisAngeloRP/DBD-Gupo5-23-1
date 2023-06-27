@@ -160,7 +160,6 @@ const crearPartida = async (req, res, next) => {
     fecha_estimacion,
     presupuesto_id,
     tipo_partida,
-    proyecto_id,
   } = req.body;
 
   try {
@@ -171,13 +170,12 @@ const crearPartida = async (req, res, next) => {
       !monto ||
       !fecha_estimacion ||
       !presupuesto_id ||
-      !tipo_partida ||
-      !proyecto_id
+      !tipo_partida
     ) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
     const result = await pool.query(
-      "INSERT INTO Partida (estado_partida, divisa_Partida, descripcion_Partida, monto_Partida, fecha_creacion_Partida, presupuesto_id, tipo_partida, proyecto_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+      "INSERT INTO Partida (estado_partida, divisa, descripcion,monto, fecha_estimacion, presupuesto_id, tipo_partida) VALUES ($1, $2, $3, $4, $5, $6, $7)",
       [
         estado_partida,
         divisa,
@@ -186,7 +184,6 @@ const crearPartida = async (req, res, next) => {
         fecha_estimacion,
         presupuesto_id,
         tipo_partida,
-        proyecto_id,
       ]
     );
     // Resto del código

@@ -22,7 +22,7 @@ export default function EmpleaxProyecto() {
 
   const cargarDatos = async (proyecto_id) => {
     const response = await fetch(
-      `http://localhost:3000/empxpro/${proyecto_id}`
+      `http://localhost:4000/empxpro/${proyecto_id}`
     );
     const data = await response.json();
     setDatos(data);
