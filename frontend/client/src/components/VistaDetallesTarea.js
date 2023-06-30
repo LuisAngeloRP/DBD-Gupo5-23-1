@@ -13,11 +13,11 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
-import { tareasColumna } from "./tareasColumna";
-import { tareasFila } from "./tareasFila";
 import DetallesTareaComponent from "./detallesTarea";
-import Proyecto from "./VistaDetalleProyecto";
+import CrearTarea from './CrearTarea';
 
 const Tareas = () => {
   const { id } = useParams();
@@ -28,6 +28,7 @@ const Tareas = () => {
     tareasFinalizadas: [],
   });
   const [openDialog, setOpenDialog] = useState(false);
+  const [openAgregarTareaDialog, setOpenAgregarTareaDialog] = useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:4000/mostrar-detalles-proyecto/${id}`)
@@ -65,6 +66,16 @@ const Tareas = () => {
   const handleCloseDialog = () => {
     setOpenDialog();
   };
+
+  const handleOpenAgregarTareaDialog = () => {
+    setOpenAgregarTareaDialog(true);
+  };
+
+  // Función para cerrar el diálogo "Agregar Tarea"
+  const handleCloseAgregarTareaDialog = () => {
+    setOpenAgregarTareaDialog(false);
+  };
+
 
   return (
     <Paper
@@ -196,20 +207,7 @@ const Tareas = () => {
           display: "flex",
         }}
       >
-        {/* <h1>a</h1>      No sirve :v
-            {true && <tareasColumna/>}
-            <div>
-                <h1>a</h1>
-                {<tareasColumna></tareasColumna>}
-                {vista === 'tareasColumna' && <tareasColumna />}
-                {vista === 'tareasFila' && <tareasFila />}
-            </div>
-
-            <button onClick={mostrarColumna} style={{height: 2}}>Mostrar Col</button>
-            <button onClick={mostrarFila} style={{height: 2}}>Mostrar Fil</button>
-
-            <Link to="/" >Volver al inicio</Link> */}
-
+      
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <div
@@ -242,8 +240,16 @@ const Tareas = () => {
                     <Grid container direction="column">
                       <Grid item>
                         <ListItemText
-                          primary={tarea.nombre_tarea}
-                          secondary={tarea.descripcion_tarea}
+                          primary={
+                            <Typography variant="h6">
+                              {tarea.nombre_tarea}
+                            </Typography>
+                            }
+                          secondary={
+                              <Typography variant="body" component="span">
+                                {tarea.descripcion_tarea}
+                              </Typography>
+                            }
                         />
                       </Grid>
                       <Grid item>
@@ -259,7 +265,25 @@ const Tareas = () => {
                           }}
                         >
                           {tarea.fecha_hora}
-                          <img src={require("./img/eye.png")} width="24px" />
+                          <img src={require("./img/eye.png")} width='24px' onClick={() => handleOpenDialog(tarea.tarea_id)}/>
+                          <Dialog 
+                            open={openDialog === tarea.tarea_id} 
+                            onClose={handleCloseDialog} 
+                            PaperProps={{style: {
+                              width: '60vw',
+                              maxWidth: 'none',
+                              height: '85%',
+                              },}}>
+                              <DialogTitle fontSize='48px'>Tarea </DialogTitle>
+                              <DialogContent>
+                                  <DetallesTareaComponent id={tarea.tarea_id} />
+                              </DialogContent>
+                              <DialogActions>
+                                  <Button onClick={handleCloseDialog} color="primary">
+                                  Cerrar
+                                  </Button>
+                              </DialogActions>
+                          </Dialog>
                         </Typography>
                       </Grid>
                     </Grid>
@@ -342,8 +366,13 @@ const Tareas = () => {
                           >
                             <DialogTitle fontSize="48px">Tarea </DialogTitle>
                             <DialogContent>
-                              <DetallesTareaComponent id={openDialog} />
+                              <DetallesTareaComponent id={tarea.tarea_id} />
                             </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleCloseDialog} color="primary">
+                              Cerrar
+                              </Button>
+                            </DialogActions>
                           </Dialog>
                         </Typography>
                       </Grid>
@@ -384,8 +413,16 @@ const Tareas = () => {
                     <Grid container direction="column">
                       <Grid item>
                         <ListItemText
-                          primary={tarea.nombre_tarea}
-                          secondary={tarea.descripcion_tarea}
+                          primary={
+                          <Typography variant="h6">
+                            {tarea.nombre_tarea}
+                          </Typography>
+                          }
+                          secondary={
+                            <Typography variant="body" component="span">
+                              {tarea.descripcion_tarea}
+                            </Typography>
+                          }
                         />
                       </Grid>
                       <Grid item>
@@ -401,7 +438,25 @@ const Tareas = () => {
                           }}
                         >
                           {tarea.fecha_hora}
-                          <img src={require("./img/eye.png")} width="24px" />
+                          <img src={require("./img/eye.png")} width='24px' onClick={() => handleOpenDialog(tarea.tarea_id)}/>
+                          <Dialog 
+                            open={openDialog === tarea.tarea_id} 
+                            onClose={handleCloseDialog} 
+                            PaperProps={{style: {
+                              width: '60vw',
+                              maxWidth: 'none',
+                              height: '85%',
+                              },}}>
+                            <DialogTitle fontSize='48px'>Tarea </DialogTitle>
+                            <DialogContent>
+                                <DetallesTareaComponent id={tarea.tarea_id} />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleCloseDialog} color="primary">
+                                Cerrar
+                                </Button>
+                            </DialogActions>
+                          </Dialog>
                         </Typography>
                       </Grid>
                     </Grid>
@@ -411,6 +466,32 @@ const Tareas = () => {
             </div>
           </Grid>
         </Grid>
+        <Dialog 
+          open={openAgregarTareaDialog} 
+          onClose={handleCloseAgregarTareaDialog} 
+          PaperProps={{ style: 
+            {width: '40vw', 
+            maxWidth: 'none', 
+            height: '85%' } }}>
+          <DialogTitle fontSize='56px'>Agregar Tarea</DialogTitle>
+          <DialogContent>
+            <CrearTarea proyecto_id = {id}/>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseAgregarTareaDialog} color="primary">
+              Cerrar
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <div style={{ 
+          position: 'absolute', 
+          bottom: '16px', 
+          right: '16px' }}>
+            <Button variant="contained" onClick={handleOpenAgregarTareaDialog} style={{backgroundColor:"#000", fontSize:24}}>
+                Agregar Tarea
+            </Button>
+        </div>
       </Paper>
     </Paper>
   );

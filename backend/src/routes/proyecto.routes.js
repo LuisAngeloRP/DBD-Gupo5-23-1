@@ -12,6 +12,8 @@ const {
   calendarioProyecto,
   crearReunionYSesion,
   mostrarListaEmpleados,
+  actualizarEstadoYFechaTarea,
+  crearTareaYSesion,
 } = require("../controllers/proyecto.controller");
 
 const router = Router();
@@ -28,5 +30,7 @@ router.get("/mostrar-comentarios-tarea/:id", comentariosTarea);
 router.get("/proyecto/:id/calendario/:fecha", calendarioProyecto);
 router.post("/crear-reunion", crearReunionYSesion);
 router.get("/empleados/:id", mostrarListaEmpleados);
+router.put('/tarea/:tareaId', actualizarEstadoYFechaTarea);
+router.post('/crear-tarea', crearTareaYSesion);
 
 module.exports = router;

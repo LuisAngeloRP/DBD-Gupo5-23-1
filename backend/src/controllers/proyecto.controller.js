@@ -245,7 +245,7 @@ const mostrarDetallesTarea = async (req, res) => {
     const { id } = req.params;
 
     const detallesTarea = await pool.query(
-      "SELECT T.NOMBRE_TAREA, T.FECHA_CREACION_TAREA || ' - ' || T.HORA_CREACION_TAREA AS FECHA_CREACION, " +
+      "SELECT T.TAREA_ID, T.NOMBRE_TAREA, T.FECHA_CREACION_TAREA || ' - ' || T.HORA_CREACION_TAREA AS FECHA_CREACION, " +
         "T.FECHA_LIMITE_TAREA || ' - ' || T.HORA_LIMITE_TAREA AS FECHA_ENTREGA, T.DESCRIPCION_TAREA, " +
         "T.FECHA_REALIZADA_TAREA, T.HORA_REALIZADA_TAREA, T.ESTADO_TAREA, " +
         "E.NOMBRE || ' ' || E.APELLIDO AS JEFE_PROYECTO " +
@@ -430,6 +430,70 @@ const mostrarListaEmpleados = async (req, res) => {
   }
 };
 
+const actualizarEstadoYFechaTarea = async (req, res) => {
+  try {
+    const { tareaId } = req.params;
+    const { estado_tarea } = req.body;
+
+    // Lógica para actualizar el estado de la tarea y la fecha/hora realizada
+    const result = await pool.query('UPDATE tarea SET estado_tarea = $1 WHERE tarea_id = $2 RETURNING *', [estado_tarea, tareaId]);
+
+    if (result.rows.length === 0)
+      return res.status(404).json({ message: "Tarea no encontrada." });
+
+      if (estado_tarea == 3) {
+        await pool.query(
+          'UPDATE tarea SET fecha_realizada_tarea = current_date, hora_realizada_tarea = current_time WHERE tarea_id = $1',
+          [tareaId]
+        );
+      }
+
+      return res.json({ message: 'Estado y fecha de tarea actualizados correctamente.', estado_tarea:result.rows[0].estado_tarea }) 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al actualizar el estado y la fecha de la tarea.' });
+  }
+};
+
+const nuevaTarea = async (nombre, descripcion, dia, hora, proyectoId) => {
+  try {
+    const query = `
+      INSERT INTO TAREA (NOMBRE_TAREA, DESCRIPCION_TAREA, FECHA_CREACION_TAREA, HORA_CREACION_TAREA, 
+        FECHA_LIMITE_TAREA, HORA_LIMITE_TAREA, ESTADO_TAREA, PROYECTO_ID, USUARIO_ID) 
+      VALUES ($1, $2, CURRENT_DATE, CURRENT_TIME, $3, $4, 1, $5, 1)
+      RETURNING tarea_id`;
+    const values = [nombre, descripcion, dia, hora, proyectoId];
+    const result = await pool.query(query, values);
+    return result.rows[0].tarea_id;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const insertAsignacionTarea = async (usuarioIds, tareaId) => {
+  try {
+    const query = `
+      INSERT INTO asignacion_tarea(usuario_id, tarea_id)
+      SELECT unnest($1::int[]), $2`;
+    const values = [usuarioIds, tareaId];
+    await pool.query(query, values);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const crearTareaYSesion = async (req, res) => {
+  try {
+    const { nombre, descripcion, dia, hora, proyectoId, usuarioIds } = req.body;
+    const tareaId = await nuevaTarea(nombre, descripcion, dia, hora, proyectoId);
+    await insertAsignacionTarea(usuarioIds, tareaId);
+    res.json({ message: 'Tarea y asignaciones creadas correctamente.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al crear la tarea y las asignaciones.' });
+  }
+};
+
 module.exports = {
   mostrarDetalleProyecto,
   mostrarDetallesReunion,
@@ -441,4 +505,6 @@ module.exports = {
   calendarioProyecto,
   crearReunionYSesion,
   mostrarListaEmpleados,
+  actualizarEstadoYFechaTarea,
+  crearTareaYSesion,
 };

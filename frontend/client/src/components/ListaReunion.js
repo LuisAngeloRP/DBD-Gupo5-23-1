@@ -12,13 +12,12 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import DetallesTareaComponent from "./detallesTarea";
 import CrearReunion from "./crearReunion";
 
 const ListaReuion = () => {
   const { id } = useParams();
   const [proyecto, setProyecto] = useState(null);
-  const [reunion, setReunion] = useState(null);
+  const [reunion, setReunion] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleOpenDialog = () => {

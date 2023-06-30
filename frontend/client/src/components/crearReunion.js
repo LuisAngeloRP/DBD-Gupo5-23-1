@@ -79,10 +79,12 @@ const CrearReunion = ({ proyecto_id }) => {
   };
 
   return (
+    <form>
     <div style={{ marginLeft: 16, marginRight: 16 }}>
       <Typography fontSize="30px">Descripción de la reunion:</Typography>
       <input
         type="text"
+        required
         value={descripcion}
         onChange={handleDescripcionChange}
         placeholder="Descripción de la reunión"
@@ -96,6 +98,7 @@ const CrearReunion = ({ proyecto_id }) => {
       />
       <Typography fontSize="30px">Día de la reunion:</Typography>
       <input
+        required
         type="date"
         value={dia}
         onChange={handleDiaChange}
@@ -108,6 +111,7 @@ const CrearReunion = ({ proyecto_id }) => {
       />
       <Typography fontSize="30px">Hora de la reunion:</Typography>
       <input
+        required
         type="time"
         value={hora}
         onChange={handleHoraChange}
@@ -138,7 +142,8 @@ const CrearReunion = ({ proyecto_id }) => {
             </option>
           ))}
         </select>
-        <button
+        <button 
+          type="button"
           onClick={handleAgregarEmpleado}
           style={{
             backgroundColor: "#FFFFFF",
@@ -167,6 +172,7 @@ const CrearReunion = ({ proyecto_id }) => {
         </div>
       </div>
       <button
+        type="submit"
         onClick={handleCrearReunion}
         style={{
           backgroundColor: "#00D16D",
@@ -183,6 +189,7 @@ const CrearReunion = ({ proyecto_id }) => {
         Crear
       </button>
     </div>
+    </form>
   );
 };
 
