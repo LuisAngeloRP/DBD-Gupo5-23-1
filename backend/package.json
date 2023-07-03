@@ -22,10 +22,12 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "morgan": "^1.10.0",
+    "neo4j-driver": "^5.10.0",
     "node-fetch": "^3.3.1",
     "pg": "^8.11.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "cassandra-driver": "*"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"

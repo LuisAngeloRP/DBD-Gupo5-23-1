@@ -20,6 +20,7 @@ import VistaGasto from "./components/vistaGasto";
 import VistaPresupuesto from "./components/vistaPresupuesto";
 import VistaPartida from "./components/vistaPartida";
 import ListaReuion from "./components/ListaReunion";
+import TareasCas from "./components/VistaDetallesTareaCas";
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/proyecto/:id/objetivos" element={<Objetivos />} />
             <Route path="proyecto/:id/tareas" element={<TareasDe />} />
             <Route path="proyecto/:id/reuniones" element={<ListaReuion />} />
+            <Route path="proyecto/:id/tareasCas" element={<TareasCas />} />
             // Presupuesto, partida y gastos
             <Route path="lista-proyectos" element={<ListaProyectos />} />
             <Route
