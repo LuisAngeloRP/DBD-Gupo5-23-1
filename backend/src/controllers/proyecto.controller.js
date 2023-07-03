@@ -416,9 +416,10 @@ const mostrarListaEmpleados = async (req, res) => {
   try {
     const { id } = req.params;
     const query = `
-        SELECT E.NOMBRE || ' ' || E.APELLIDO AS EMPLEADO 
+        SELECT U.USUARIO_ID, E.NOMBRE || ' ' || E.APELLIDO AS EMPLEADO 
         FROM ASIGNACION_EMPLEADOS AE
         INNER JOIN EMPLEADO E ON AE.EMPLEADO_ID = E.EMPLEADO_ID
+        INNER JOIN USUARIO U ON E.USUARIO_ID = U.USUARIO_ID
         WHERE AE.PROYECTO_ID = $1`;
     const result = await pool.query(query, [id]);
     res.json(result.rows);
@@ -494,6 +495,132 @@ const crearTareaYSesion = async (req, res) => {
   }
 };
 
+const { Client } = require('cassandra-driver');
+
+const client = new Client({ contactPoints: ['127.0.0.1'], 
+  localDataCenter: 'datacenter1',keyspace: 'Prueba' });
+
+
+const mostrarDetalleProyectoCas = async (req, res) => {
+  try {
+    await client.connect();
+    const { id } = req.params;
+    const proyectoId = parseInt(id, 10);
+    const detallesProyecto = await client.execute(
+      'SELECT nombre_proyecto, descripcion_proyecto FROM "Prueba"."Proyecto" WHERE proyecto_id = ?',
+      [proyectoId]
+    );
+    // Consultar el cliente del proyecto
+    const contrato = await client.execute(
+      'SELECT cliente_id FROM "Prueba"."Contrato" WHERE proyecto_id = ?',
+      [id]
+    );
+
+    const cliente = await client.execute(
+      'SELECT nombre_cliente FROM "Prueba"."Cliente" WHERE cliente_id = ?',
+      [contrato.rows[0].cliente_id]
+    );
+
+    // Consultar el jefe de proyecto
+    const empleado = await client.execute(
+      'SELECT empleado_id FROM "Prueba"."Proyecto" WHERE proyecto_id = ?',
+      [id]
+    );
+
+    const jefeProyecto = await client.execute(
+      'SELECT nombre, apellido FROM "Prueba"."Empleado" WHERE empleado_id = ?',
+      [empleado.rows[0].empleado_id]
+    );
+
+    // Consultar los desarrolladores del proyecto
+    const desarrolladores = await client.execute(
+      'SELECT nombre, apellido FROM "Prueba"."Empleado" WHERE empleado_id IN ' +
+      '(SELECT empleado_id FROM "Prueba"."Asignacion_Empleados" WHERE proyecto_id = ?)',
+      [id]
+    );
+
+    const resultados = {
+      detallesProyecto: detallesProyecto.rows,
+      cliente: cliente.rows,
+      jefeProyecto: jefeProyecto.rows,
+      desarrolladores: desarrolladores.rows,
+    };
+
+    res.json(resultados);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const mostrarTareasColumnaCas = async (req, res) => {
+  try {
+    await client.connect();
+
+    const Tareas = await client.execute(
+      "SELECT TAREA_ID, NOMBRE_TAREA, DESCRIPCION_TAREA, FECHA_LIMITE_TAREA, HORA_LIMITE_TAREA," +
+        "ESTADO_TAREA " +
+        'FROM "Prueba"."Tarea"' 
+    );
+
+    const tareasPendientes = Tareas.rows.filter(
+      (tarea) => tarea.estado_tarea === 1
+    );
+    const tareasEnProgreso = Tareas.rows.filter(
+      (tarea) => tarea.estado_tarea === 2
+    );
+    const tareasFinalizadas = Tareas.rows.filter(
+      (tarea) => tarea.estado_tarea === 3
+    );
+
+    res.json({ tareasPendientes, tareasEnProgreso, tareasFinalizadas });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const mostrarDetallesTareaCas = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const detallesTarea = await client.execute(
+      "SELECT TAREA_ID, NOMBRE_TAREA, FECHA_CREACION_TAREA, HORA_CREACION_TAREA, " +
+        "FECHA_LIMITE_TAREA, HORA_LIMITE_TAREA, DESCRIPCION_TAREA, " +
+        "FECHA_REALIZADA_TAREA, HORA_REALIZADA_TAREA, ESTADO_TAREA " +
+        'FROM "Prueba"."Tarea" ' +
+        "WHERE TAREA_ID = ?",
+      [id]);
+
+    const resultados = {
+      detallesTarea: detallesTarea.rows,
+    };
+
+    res.json(resultados);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const crearTareaCas = async (req, res) => {
+  try {
+    const { nombreTarea, descripcionTarea} = req.body;
+    const query = 'INSERT INTO "Prueba"."Tarea" (tarea_id, nombre_tarea, descripcion_tarea, ' +
+      'fecha_creacion_tarea, hora_creacion_tarea, fecha_limite_tarea, hora_limite_tarea, ' +
+      'estado_tarea, proyecto_id ' +
+      ") VALUES (uuid(), ?, ?, '2023-07-03', '12:00:00', '2023-07-03', '18:00:00', 1, 1) ";
+      
+      for(let i = 0; i< 1000 ; i++){
+       await client.execute(query, [
+         nombreTarea,
+         descripcionTarea
+       ]);
+      }
+      res.status(200).json({ message: 'Tarea insertada correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al crear la tarea y las asignaciones.' });
+  }
+};
+
 module.exports = {
   mostrarDetalleProyecto,
   mostrarDetallesReunion,
@@ -507,4 +634,8 @@ module.exports = {
   mostrarListaEmpleados,
   actualizarEstadoYFechaTarea,
   crearTareaYSesion,
+  mostrarDetalleProyectoCas,
+  mostrarTareasColumnaCas,
+  mostrarDetallesTareaCas,
+  crearTareaCas
 };

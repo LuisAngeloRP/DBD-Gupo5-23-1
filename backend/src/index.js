@@ -2,6 +2,16 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 
+const cassandra = require("cassandra-driver");
+const client = new cassandra.Client({contactPoints: ['127.0.0.1']});
+client.connect(function(err, result){
+  console.log('index: cassandra conected')
+});
+
+var getAllSubscriber = 'Select * from "Prueba"."Proyecto"'
+
+
+
 const reporteRoutes = require("./routes/reporte.routes");
 const proyectosRoutes = require("./routes/proyecto.routes");
 const presupuestoRoutes = require("./routes/presupuesto.routes");

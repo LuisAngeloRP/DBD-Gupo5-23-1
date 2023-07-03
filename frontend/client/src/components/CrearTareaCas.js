@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
 
-const CrearTarea = ({proyecto_id}) => {
+const CrearTareaCas = ({proyecto_id}) => {
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [dia, setDia] = useState('');
@@ -62,14 +62,14 @@ const CrearTarea = ({proyecto_id}) => {
     try {
       const empleadoIds = selectedEmpleados.map((empleado) => empleado.usuario_id);
 
-        const response = await fetch('http://localhost:4000/crear-tarea', {
+        const response = await fetch('http://localhost:4000/crear-tareaCas', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-              nombre: nombre,
-              descripcion: descripcion,
+            nombreTarea: nombre,
+            descripcionTarea: descripcion,
               dia: dia,
               hora: hora,
               proyectoId: proyecto_id,
@@ -157,4 +157,4 @@ const CrearTarea = ({proyecto_id}) => {
   );
 };
 
-export default CrearTarea;
+export default CrearTareaCas;
